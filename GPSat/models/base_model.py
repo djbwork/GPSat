@@ -5,7 +5,10 @@ import platform
 import subprocess
 import pandas as pd
 import numpy as np
-from tensorflow.python.client import device_lib
+try:
+    from tensorflow.python.client import device_lib
+except ImportError:  # tensorflow is only used to look up the GPU name
+    device_lib = None
 from abc import ABC, abstractmethod
 from typing import List, Dict, Union, Literal, Optional
 from GPSat.decorators import timer
@@ -280,6 +283,9 @@ class BaseGPRModel(ABC):
 
         gpu_name = None
         cpu_name = self._get_processor_name()
+
+        if device_lib is None:  # tensorflow not installed, so no GPU lookup
+            return gpu_name, cpu_name
 
         try:
             dev = device_lib.list_local_devices()

@@ -12,10 +12,8 @@ import numba as nb
 from typing import List, Dict, Union
 from dataclasses import dataclass
 from scipy.stats import norm
-from GPSat.local_experts import get_results_from_h5file
 from GPSat.utils import json_serializable, cprint, get_config_from_sysargv, nested_dict_literal_eval
 from GPSat import get_data_path, get_parent_path
-from GPSat.models import get_model
 
 
 
@@ -195,6 +193,10 @@ def smooth_hyperparameters(result_file: str,
         print(f"found model_name: {model_name}")
     else:
         print(f"provided model_name: {model_name}")
+
+    # imported here (not at module level) as these pull in heavy dependencies not needed to glue predictions
+    from GPSat.local_experts import get_results_from_h5file
+    from GPSat.models import get_model
 
     # Instantiate model with pseudo data - only used to get param_names from model
     model = get_model(model_name)
